@@ -18,12 +18,12 @@ router.post('/register', async (req, res) => {
       password: hashedPassword
     })
 
-    const payload = { 
-      username: user.username, 
-      email: email, 
-      _id: user._id 
+    const payload = {
+      username: user.username,
+      email: email,
+      _id: user._id
     }
-    const token = jwt.sign({ data: payload }, secret, {expiresIn: expiration } )
+    const token = jwt.sign({ data: payload }, secret, { expiresIn: expiration })
 
     res.status(201).json({ token, user })
   } catch (err) {
@@ -31,6 +31,31 @@ router.post('/register', async (req, res) => {
     res.status(400).json({ message: err.message })
   }
 
-
 })
 
+router.post('/login', async (req, res) => {
+  try {
+    const user = await user.findOne({ email: req.body.email })
+    if (!user) {
+      return res.status(400).json({ message: "Incorrect email or password" })
+    }
+
+    const correctPassword = await bcrypt.compare(req.body.password, user.password)
+    if (!correctPassword) {
+      return res.status(400).json({ message: "Incorrect email or password" })
+    }
+
+    const payload = {
+      username: user.username,
+      email: email,
+      _id: user._id
+    }
+    const token = jwt.sign({ data: payload }, secret, { expiresIn: expiration })
+    res.status(200).json({ token, user })
+  } catch (err) {
+    console.log(err.message)
+    res.status(400).json({ message: err.message })
+  }
+})
+
+export default router
