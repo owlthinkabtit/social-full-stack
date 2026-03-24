@@ -20,12 +20,13 @@ router.post('/register', async (req, res) => {
 
     const payload = {
       username: user.username,
-      email: email,
+      email: user.email,
       _id: user._id
     }
     const token = jwt.sign({ data: payload }, secret, { expiresIn: expiration })
 
     res.status(201).json({ token, user })
+
   } catch (err) {
     console.log(err.message)
     res.status(400).json({ message: err.message })
@@ -35,7 +36,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await user.findOne({ email: req.body.email })
+    const user = await User.findOne({ email: req.body.email })
     if (!user) {
       return res.status(400).json({ message: "Incorrect email or password" })
     }
@@ -47,12 +48,12 @@ router.post('/login', async (req, res) => {
 
     const payload = {
       username: user.username,
-      email: email,
+      email: user.email,
       _id: user._id
     }
     const token = jwt.sign({ data: payload }, secret, { expiresIn: expiration })
     res.status(200).json({ token, user })
-    
+
   } catch (err) {
     console.log(err.message)
     res.status(400).json({ message: err.message })
