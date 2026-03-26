@@ -1,24 +1,33 @@
 import "./App.css";
-import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Feed from "./pages/Feed";
+
 import NavBar from "./components/NavBar";
+import { useUser } from "./context/UserContext";
+
 
 function App() {
-  useEffect(() => {
-    
-  }, []);
+  const { user } = useUser() 
 
   return (
     <>
       <NavBar />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/feed" element={<Feed />} />
-      </Routes>
+      {user ?
+        <Routes>
+          <Route path="/feed" element={<Feed />} />
+          <Route path="*" element={<Navigate to="/feed" />} />
+        </Routes>
+        :
+
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      }
     </>
   );
 }

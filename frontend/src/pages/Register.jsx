@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { userClient } from "../clients/api"
 
 function Register() {
   const [form, setForm] = useState({
@@ -14,10 +15,24 @@ function Register() {
     });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    console.log(form)
+    try {
+      userClient.post('/register', form)
+    } catch(err) {
+      console.log(err)
+      alert(err.message)
+    }
+  }
+
   return (
     <div>
       <h1>Register Page</h1>
-      <form>
+      <form onSubmit={handleSubmit
+
+      }>
         <label htmlFor="username">Username:</label>
         <input
           value={form.username}
