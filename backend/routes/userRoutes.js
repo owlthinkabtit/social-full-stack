@@ -6,8 +6,11 @@ const router = express.Router() //takes the place of the express.app in server.j
 
 import User from '../models/User.js'
 
+import { authMiddleware } from '../utils/auth.js'
+
 const secret = process.env.JWT_SECRET
 const expiration = '24h'
+
 router.post('/register', async (req, res) => {
   try {
     const saltRounds = 10
@@ -37,6 +40,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email })
+    
     if (!user) {
       return res.status(400).json({ message: "Incorrect email or password" })
     }
@@ -58,6 +62,12 @@ router.post('/login', async (req, res) => {
     console.log(err.message)
     res.status(400).json({ message: err.message })
   }
+})
+
+router.use(authMiddleware)
+
+router.get('/', (req, res) => {
+  res.status(200).json(req.user)
 })
 
 export default router

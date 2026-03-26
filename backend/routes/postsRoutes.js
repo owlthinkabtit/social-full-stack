@@ -10,7 +10,10 @@ router.use(authMiddleware)
 
 router.post('/', async (req, res) => {
   try {
-    const post = await Post.create(req.body)
+    const post = await Post.create({
+      ...req.body,
+      author: req.user._id
+    })
     res.status(200).json(post)
   } catch(err) {
     console.log(err.message)
@@ -21,7 +24,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const posts = await Post.find({})
+    const posts = await Post.find({}).sort({ createdAt: -1})
     res.status(200).json(posts)
   } catch(err) {
     console.log(err.message)
